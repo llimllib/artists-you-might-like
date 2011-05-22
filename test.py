@@ -33,5 +33,4 @@ final = []
 for name, (score, n) in similar.iteritems():
     final.append((score * (n**2), score, n, name))
 
-#TODO: sort by similarity * n, or something that emphasizes bands on multiple lists
 lst = sorted(final, reverse=True)[:30]
