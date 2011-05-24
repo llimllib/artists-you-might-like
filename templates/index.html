@@ -60,6 +60,11 @@ h1 {
     margin: auto;
     margin-bottom: 20px;
 }
+#waiting {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+}
 </style>
 <script src="/static/js/jquery-1.2.6.js"></script>
 <script>
@@ -90,6 +95,8 @@ function onSubmit() {
     }).get().join("&");
     var uri = encodeURI(baseURI + keys);
 
+    $("#bandarea").html('<div id="waiting"><img src="/static/images/loading.gif"></div>');
+
     console.log("requesting uri", uri);
 
     $.ajax({
@@ -97,9 +104,27 @@ function onSubmit() {
         success: function(data) {
             console.log("success!", data);
         },
-        failure: function(xhr, textStatus, errorThrown) {
-            console.log("failure :(", xhr, textStatus, errorThrown);
-        }
+        error: function(xhr, textStatus, errorThrown) {
+            console.log("error :(", xhr, textStatus, errorThrown);
+
+            //Let's restore the bandarea box
+            $("#bandarea").html('<div id="inputboxes">'
+              + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
+              + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
+              + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
+              + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
+              + '</div>'
+              + '<div id="bafooter">'
+              + '  <a href="#" id="submit">Submit</a> | <a href="#" id="addmore">Add More Bands</a>'
+              + '</div>');
+
+            //handle focus and blur on the input box
+            $(".bandinput").focus(onInputFocus);
+            $(".bandinput").blur(onInputBlur);
+            
+            //execute a blur on the box
+            $(".bandinput").blur();  
+        },
     });
 }
 
