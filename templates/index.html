@@ -19,7 +19,7 @@ h1 {
     font-weight: 500;
     letter-spacing: 1px;
 }
-#bandinput {
+.bandinput {
     height: 42px;
     vertical-align: top;
     width: 560px;
@@ -51,8 +51,7 @@ h1 {
     border-radius: 8px;
     background-color: white;
 }
-.defaultText { }
-.defaultTextActive {
+.bandinputActive {
     color: #ccc;
     font-size: 20px;
 }
@@ -64,14 +63,10 @@ h1 {
 </style>
 <script src="/static/js/jquery-1.2.6.js"></script>
 <script>
-function onSimilarClicked() {
-    /* todo: run the AJAX to get the bands */
-}
-
 function onInputFocus() {
     var elt = $(this);
     if (elt.val() == elt.attr("title")) {
-        elt.removeClass("defaultTextActive");
+        elt.removeClass("bandinputActive");
         elt.val("");
     }
 }
@@ -79,20 +74,57 @@ function onInputFocus() {
 function onInputBlur() {
     var elt = $(this);
     if (elt.val() == "") {
-        elt.addClass("defaultTextActive");
+        elt.addClass("bandinputActive");
         elt.val(elt.attr("title"));
     }
 }
 
+function onSubmit() {
+    var baseURI = "/similarity?";
+    //for each input, grab the value, and join them with & to make a query string
+    var keys = $(".bandinput").map(function(i,elt) {
+        var e = $(elt);
+        if (e.attr("title") != e.val()) {
+            return "b=" + e.val()
+        }
+    }).get().join("&");
+    var uri = encodeURI(baseURI + keys);
+
+    console.log("requesting uri", uri);
+
+    $.ajax({
+        url: uri, 
+        success: function(data) {
+            console.log("success!", data);
+        },
+        failure: function(xhr, textStatus, errorThrown) {
+            console.log("failure :(", xhr, textStatus, errorThrown);
+        }
+    });
+}
+
+function onAddMore() {
+    var elt = $('<input type="text" class="bandinput" title="Enter a band name..."/>');
+    elt.addClass("bandinputActive");
+    elt.val(elt.attr("title"));
+    elt.focus(onInputFocus);
+    elt.blur(onInputBlur);
+
+    $("#inputboxes").append(elt);
+    $("#inputboxes").append(elt.clone());
+    $("#inputboxes").append(elt.clone());
+}
+
 $(function() {
-    $("#add").click(onSimilarClicked);
+    $("#submit").click(onSubmit);
+    $("#addmore").click(onAddMore);
 
     //handle focus and blur on the input box
-    $(".defaultText").focus(onInputFocus);
-    $(".defaultText").blur(onInputBlur);
+    $(".bandinput").focus(onInputFocus);
+    $(".bandinput").blur(onInputBlur);
     
     //execute a blur on the box
-    $(".defaultText").blur();  
+    $(".bandinput").blur();  
 });
 </script>
 </head>
@@ -102,10 +134,12 @@ $(function() {
     <h1>Find Bands Similar To:</h1>
 
     <div id="bandarea">
-        <input type="text" id="bandinput" class="defaultText" title="Enter a band name..."/>
-        <input type="text" id="bandinput" class="defaultText" title="Enter a band name..."/>
-        <input type="text" id="bandinput" class="defaultText" title="Enter a band name..."/>
-        <input type="text" id="bandinput" class="defaultText" title="Enter a band name..."/>
+        <div id="inputboxes">
+          <input type="text" class="bandinput" title="Enter a band name..."/>
+          <input type="text" class="bandinput" title="Enter a band name..."/>
+          <input type="text" class="bandinput" title="Enter a band name..."/>
+          <input type="text" class="bandinput" title="Enter a band name..."/>
+        </div>
         <div id="bafooter">
           <a href="#" id="submit">Submit</a> | <a href="#" id="addmore">Add More Bands</a>
         </div>
