@@ -84,6 +84,38 @@ function onInputBlur() {
     }
 }
 
+function onAjaxError(xhr, textStatus, errorThrown) {
+    console.log("error :(", xhr, textStatus, errorThrown);
+
+    //TODO: actually handle errors and present them to the user
+
+    //Let's restore the bandarea box
+    $("#bandarea").html('<div id="inputboxes">'
+      + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
+      + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
+      + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
+      + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
+      + '</div>'
+      + '<div id="bafooter">'
+      + '  <a href="#" id="submit">Submit</a> | <a href="#" id="addmore">Add More Bands</a>'
+      + '</div>');
+
+    init();
+}
+
+function onAjaxSuccess(bands) {
+    $("#bandarea").html('<ol id="bandlist"></ol>');
+    $.each(bands.slice(0,25), function(i, elt) {
+        console.log(i, elt);
+        var weighted = elt[0];
+        var sum = elt[1];
+        var n = elt[2];
+        var band = elt[3];
+
+        $("#bandlist").append("<li>" + band + "</li>");
+    });
+}
+
 function onSubmit() {
     var baseURI = "/similarity?";
     //for each input, grab the value, and join them with & to make a query string
@@ -101,30 +133,9 @@ function onSubmit() {
 
     $.ajax({
         url: uri, 
-        success: function(data) {
-            console.log("success!", data);
-        },
-        error: function(xhr, textStatus, errorThrown) {
-            console.log("error :(", xhr, textStatus, errorThrown);
-
-            //Let's restore the bandarea box
-            $("#bandarea").html('<div id="inputboxes">'
-              + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
-              + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
-              + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
-              + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
-              + '</div>'
-              + '<div id="bafooter">'
-              + '  <a href="#" id="submit">Submit</a> | <a href="#" id="addmore">Add More Bands</a>'
-              + '</div>');
-
-            //handle focus and blur on the input box
-            $(".bandinput").focus(onInputFocus);
-            $(".bandinput").blur(onInputBlur);
-            
-            //execute a blur on the box
-            $(".bandinput").blur();  
-        },
+        success: onAjaxSuccess,
+        error: onAjaxError,
+        dataType: "json"
     });
 }
 
@@ -140,7 +151,7 @@ function onAddMore() {
     $("#inputboxes").append(elt.clone());
 }
 
-$(function() {
+function init() {
     $("#submit").click(onSubmit);
     $("#addmore").click(onAddMore);
 
@@ -150,6 +161,10 @@ $(function() {
     
     //execute a blur on the box
     $(".bandinput").blur();  
+}
+
+$(function() {
+    init();
 });
 </script>
 </head>
