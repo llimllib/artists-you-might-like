@@ -76,7 +76,23 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'djcelery',
     'thepage',
 )
+
+#celery setup
+import djcelery
+djcelery.setup_loader()
+
+BROKER_BACKEND = "redis"
+
+BROKER_HOST = "localhost"  # Maps to redis host.
+BROKER_PORT = 6379         # Maps to redis port.
+BROKER_VHOST = 0         # Maps to database number.
+
+CELERY_RESULT_BACKEND = "redis"
+REDIS_HOST = "localhost"
+REDIS_PORT = 6379
+REDIS_DB = 0
 
 execfile(root_join("settings/local.py"))
