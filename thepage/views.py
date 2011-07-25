@@ -22,8 +22,8 @@ def check_result(request):
     task = get_similar_bands.AsyncResult(task_id)
     if task.ready():
         if task.state == SUCCESS:
-            return HttpResponse(simplejson.dumps(task.result, mimetype='application/json'))
+            return HttpResponse(simplejson.dumps(task.result), mimetype='application/json')
         else:
-            return HttpResponse(simplejson.dumps({"fail": task.result}), mimetype='application/json')
+            return HttpResponse(simplejson.dumps({"fail": task.result, "cause": task.traceback}), mimetype='application/json')
     else:
-        return HttpResponse(simplejson.dumps("false"), mimetype='application/json')
+        return HttpResponse(simplejson.dumps("processing"), mimetype='application/json', status=202)
