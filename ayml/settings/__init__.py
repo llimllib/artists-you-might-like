@@ -62,7 +62,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
 )
 
-ROOT_URLCONF = 'artists_you_might_like.urls'
+ROOT_URLCONF = 'ayml.urls'
 
 TEMPLATE_DIRS = (
     root_join("templates"),
