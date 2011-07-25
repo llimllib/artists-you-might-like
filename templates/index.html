@@ -68,6 +68,21 @@ h1 {
 </style>
 <script src="/static/js/jquery-1.2.6.js"></script>
 <script>
+function poll(url, options) {
+    options = options || {};
+    //TODO: by default, assume any status code 20x where x != 0, or 4xx, means "incomplete"
+    success_condition = options["success_condition"] || function(){};
+    success_ = options["success_condition"] || function(){};
+
+    $.ajax({
+        url: url,
+        success: function(data) {
+            if success_condition(data) {
+            }
+        },
+    });
+}
+
 function onInputFocus() {
     var elt = $(this);
     if (elt.val() == elt.attr("title")) {
@@ -103,7 +118,7 @@ function onAjaxError(xhr, textStatus, errorThrown) {
     init();
 }
 
-function onAjaxSuccess(bands) {
+function onGotBands(bands) {
     $("#bandarea").html('<ol id="bandlist"></ol>');
     $.each(bands.slice(0,25), function(i, elt) {
         console.log(i, elt);
@@ -114,6 +129,18 @@ function onAjaxSuccess(bands) {
 
         $("#bandlist").append("<li>" + band + "</li>");
     });
+}
+
+function onSubmitSuccess(task_id) {
+    var uri = "/check_result?task_id=" + encodeURI(task_id);
+    setTimeout(function() {
+        $.ajax({
+            url: uri,
+            success: onGotBands,
+            error: onAjaxError,
+            dataType: "json"
+        });
+    }, 1000);
 }
 
 function onSubmit() {
@@ -133,8 +160,8 @@ function onSubmit() {
 
     $.ajax({
         url: uri, 
-        success: onAjaxSuccess,
-        error: onAjaxError,
+        success: onSubmitSuccess,
+        error: onSubmitFail,
         dataType: "json"
     });
 }
