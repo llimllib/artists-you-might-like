@@ -1,5 +1,5 @@
 *.pyc
 .DS_Store
-settings/local.py
+ayml/settings/local.py
 APIKEY.txt
 .gondor
