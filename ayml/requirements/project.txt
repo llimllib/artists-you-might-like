@@ -6,7 +6,6 @@ celery==2.2.7
 django-celery==2.2.4
 django-picklefield==0.1.9
 django-staticfiles==1.0.1
-git-remote-helpers==0.1.0
 ipython==0.10.2
 kombu==1.2.0
 pyparsing==1.5.6
