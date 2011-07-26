@@ -156,7 +156,7 @@ function onSubmit() {
     }).get().join("&");
     var uri = encodeURI(baseURI + keys);
 
-    $("#bandarea").html('<div id="waiting"><img src="{{ STATIC_PREFIX }}images/loading.gif"></div>');
+    $("#bandarea").html('<div id="waiting"><img src="{{ STATIC_ROOT }}{{ STATIC_URL }}images/loading.gif"></div>');
 
     console.log("requesting uri", uri);
 
