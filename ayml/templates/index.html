@@ -66,23 +66,9 @@ h1 {
     text-align: center;
 }
 </style>
-<script src="/static/js/jquery-1.2.6.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
+<script src="/static/js/poll.js"></script>
 <script>
-function poll(url, options) {
-    options = options || {};
-    //TODO: by default, assume any status code 20x where x != 0, or 4xx, means "incomplete"
-    success_condition = options["success_condition"] || function(){};
-    success_ = options["success_condition"] || function(){};
-
-    $.ajax({
-        url: url,
-        success: function(data) {
-            if success_condition(data) {
-            }
-        },
-    });
-}
-
 function onInputFocus() {
     var elt = $(this);
     if (elt.val() == elt.attr("title")) {
@@ -121,26 +107,39 @@ function onAjaxError(xhr, textStatus, errorThrown) {
 function onGotBands(bands) {
     $("#bandarea").html('<ol id="bandlist"></ol>');
     $.each(bands.slice(0,25), function(i, elt) {
-        console.log(i, elt);
         var weighted = elt[0];
         var sum = elt[1];
         var n = elt[2];
         var band = elt[3];
 
-        $("#bandlist").append("<li>" + band + "</li>");
+        $("#bandlist").append('<li><a href="http://www.amazon.com/gp/redirect.html?ie=UTF8&location=http%3A%2F%2Fwww.amazon.com%2Fs%3Fie%3DUTF8%26x%3D0%26ref_%3Dnb_sb_noss%26y%3D0%26field-keywords%3D' + encodeURI(band) + '%26url%3Dsearch-alias%253Ddigital-music%23&tag=billmillorg-20&linkCode=ur2&camp=1789&creative=390957">' + band + "</a></li>");
     });
 }
 
 function onSubmitSuccess(task_id) {
     var uri = "/check_result?task_id=" + encodeURI(task_id);
-    setTimeout(function() {
+    $.poll(function(retry) {
         $.ajax({
+            type: 'GET',
             url: uri,
-            success: onGotBands,
-            error: onAjaxError,
-            dataType: "json"
+            statusCode: {
+                200: function(data, responseText, jqXHR) {
+                    onGotBands(data);
+                },
+                202: function() {
+                    retry();
+                }
+            },
+            error: function(data, responseText, jqXHR) {
+                console.log("err", data, responseText, jqXHR);
+            },
+            dataType: 'json' 
         });
-    }, 1000);
+    });
+}
+
+function onSubmitFail(data, textStatus, errorThrown) {
+  console.log(data, textStatus, errorThrown);
 }
 
 function onSubmit() {

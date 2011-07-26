@@ -3,8 +3,6 @@ from django.template import RequestContext
 from django.utils import simplejson
 from django.http import HttpResponse
 
-#from artists_you_might_like.utils.getsimilar import getsimilar
-
 from thepage.tasks import get_similar_bands
 
 def index(request):
@@ -14,16 +12,16 @@ def index(request):
 def similarity(request):
     bands = request.GET.getlist("b")
     #similar = getsimilar(bands)
-    task_id = get_similar_bands.delay(bands)
+    task_id = get_similar_bands.delay(bands).task_id
     return HttpResponse(simplejson.dumps(task_id), mimetype='application/json')
 
 def check_result(request):
     task_id = request.GET["task_id"]
     task = get_similar_bands.AsyncResult(task_id)
     if task.ready():
-        if task.state == SUCCESS:
+        if task.state == 'SUCCESS':
             return HttpResponse(simplejson.dumps(task.result), mimetype='application/json')
         else:
-            return HttpResponse(simplejson.dumps({"fail": task.result, "cause": task.traceback}), mimetype='application/json')
+            return HttpResponse(simplejson.dumps({"fail": task.result, "cause": task.traceback}), mimetype='application/json', status=500)
     else:
         return HttpResponse(simplejson.dumps("processing"), mimetype='application/json', status=202)

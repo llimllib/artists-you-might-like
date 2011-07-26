@@ -55,7 +55,12 @@ def get_similar_bands(bands):
         for line in text.split("\n"):
             if not line: continue
 
-            similarity, mbid, bandname = html_unescape(line).split(",", 2)
+            try:
+                similarity, mbid, bandname = html_unescape(line).split(",", 2)
+            except ValueError:
+                print "error processing %s" % line
+                continue
+
             similarity = float(similarity)
 
             if bandname in similar:
