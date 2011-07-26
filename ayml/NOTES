@@ -1,0 +1,16 @@
+import json
+import bottlenose
+
+AWS_KEY = "<AWS_KEY>"
+PRIVATE_KEY = "<PRIVATE_KEY>"
+
+amazon = bottlenose.Amazon(AWS_KEY, PRIVATE_KEY, "billmillorg-20")
+
+#get images
+r = amazon.ItemSearch(Keywords = "Gnarls Barkley", SearchIndex = "MP3Downloads",
+     ResponseGroup="Images", Style="http://xml2json-xslt.googlecode.com/svn/trunk/xml2json.xslt")
+json.loads(r)
+
+#get items and some other weird shit
+r = amazon.ItemSearch(Keywords = "Gnarls Barkley", SearchIndex = "MP3Downloads",
+     Style="http://xml2json-xslt.googlecode.com/svn/trunk/xml2json.xslt")
