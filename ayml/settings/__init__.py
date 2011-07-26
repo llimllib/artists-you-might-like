@@ -33,6 +33,14 @@ USE_I18N = True
 # calendars according to the current locale
 USE_L10N = True
 
+#From the Gondor docs:
+#
+#MEDIA_ROOT = "<generated>"
+#STATIC_ROOT = "<generated>"
+#MEDIA_URL = "/site_media/media/"
+#STATIC_URL = "/site_media/static/"
+#ADMIN_MEDIA_PREFIX = posixpath.join(STATIC_URL, "admin/")
+
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
 MEDIA_ROOT = ''
@@ -40,7 +48,8 @@ MEDIA_ROOT = ''
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
+STATIC_URL = '/static/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.

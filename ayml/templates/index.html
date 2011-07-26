@@ -5,7 +5,7 @@ body {
     background-color: #F6F6F6;
     font-family: Helvetica, Arial, sans-serif;
     /* XXX: thank http://www.flickr.com/photos/anirudhkoul/3780195067/ for the image if I end up using this */
-    background-image: url("/static/images/bg2.jpg");
+    background-image: url("{{ STATIC_URL }}images/bg2.jpg");
     background-repeat: repeat;
 }
 h1 {
@@ -67,7 +67,7 @@ h1 {
 }
 </style>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
-<script src="/static/js/poll.js"></script>
+<script src="{{ STATIC_URL }}js/poll.js"></script>
 <script>
 function onInputFocus() {
     var elt = $(this);
@@ -153,7 +153,7 @@ function onSubmit() {
     }).get().join("&");
     var uri = encodeURI(baseURI + keys);
 
-    $("#bandarea").html('<div id="waiting"><img src="/static/images/loading.gif"></div>');
+    $("#bandarea").html('<div id="waiting"><img src="{{ STATIC_URL }}images/loading.gif"></div>');
 
     console.log("requesting uri", uri);
 
