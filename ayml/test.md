@@ -10,7 +10,7 @@ Gondor can optionally handle your static media for you. To enable static media h
 
 In order for Gondor to host your files, you must use either _[django.contrib.staticfiles](https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/)_ or _[django-staticfiles](http://pypi.python.org/pypi/django-staticfiles/)_ in your application to host static files. Make sure that one of the two is included in your checked-in settings file so that Gondor knows where to find your static files.
 
-Once you have a staticfiles app set up and running, you should be able to run this command to verify that it's able to find your static media:
+Once you have a staticfiles app set up and running, you should be able to run this command to verify that Gondor will be able to find your static media:
 
     ./manage.py collectstatic
 
