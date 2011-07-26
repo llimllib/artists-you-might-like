@@ -95,10 +95,13 @@ REDIS_HOST = "localhost"
 REDIS_PORT = 6379
 REDIS_DB = 0
 
-#first import *my* local settings
-execfile(root_join("settings/local.py"))
+#first try to import *my* local settings
+try:
+    execfile(root_join("settings/local.py"))
+except IOError:
+    pass
 
-#then import Gondor's. TODO: unify? But I like execfile better.
+#then try to import Gondor's. TODO: unify? But I like execfile better.
 try:
     from local_settings import *
 except ImportError:
