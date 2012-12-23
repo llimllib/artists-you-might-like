@@ -5,7 +5,7 @@ def getsimilar(bands):
     similar = {}
 
     for band in bands:
-        url = "http://ws.audioscrobbler.com/2.0/artist/%s/similar.txt" % band
+        url = "http://ws.audioscrobbler.com/2.0/artist/%s/similar.txt" % urllib.quote(band)
         text = urllib.urlopen(url).read()
         print "opening %s" % url
         for line in text.split("\n"):
