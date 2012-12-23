@@ -1,0 +1,65 @@
+body {
+    margin: 0;
+    background-color: #F6F6F6;
+    font-family: Helvetica, Arial, sans-serif;
+    /* XXX: thank http://www.flickr.com/photos/anirudhkoul/3780195067/ for the image if I end up using this */
+    background-image: url("{{ STATIC_PREFIX }}images/bg2.jpg");
+    background-repeat: repeat;
+}
+h1 {
+    margin: auto;
+    margin-bottom: 30px;
+    margin-top: 30px;
+    text-align: center;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 28px;
+    color: #ddd;
+    font-weight: 500;
+    letter-spacing: 1px;
+}
+.bandinput {
+    height: 42px;
+    vertical-align: top;
+    width: 560px;
+    margin-left: 19px;
+    margin-top: 19px;
+    margin-bottom: 19px;
+    padding-left: 10px;
+    font-size: 20px;
+}
+#addbutton {
+    margin-top: 19px;
+}
+.bandbox {
+    border-bottom: 1px solid #DDD;
+    vertical-align: top;
+    padding-left: 20px;
+    padding-top: 12px;
+    padding-bottom: 10px;
+    font-size: 14px;
+    color: #333;
+    background-color: white;
+}
+#content {
+    width: 610px;
+    margin: auto;
+}
+#bandarea {
+    border: 5px solid #CCC;
+    border-radius: 8px;
+    background-color: white;
+}
+.bandinputActive {
+    color: #ccc;
+    font-size: 20px;
+}
+#bafooter {
+    width: 190px;
+    margin: auto;
+    margin-bottom: 20px;
+}
+#waiting {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+}
