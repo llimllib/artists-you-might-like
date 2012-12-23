@@ -1,0 +1,152 @@
+{% load static %}
+{% get_static_prefix as STATIC_PREFIX %}
+
+<html><head><title>Artists You Might Like</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
+<script src="{{ STATIC_PREFIX }}js/poll.js"></script>
+<link rel="stylesheet" href="/static/style.css" type="text/css">
+<script>
+function onInputFocus() {
+    var elt = $(this);
+    if (elt.val() == elt.attr("title")) {
+        elt.removeClass("bandinputActive");
+        elt.val("");
+    }
+}
+
+function onInputBlur() {
+    var elt = $(this);
+    if (elt.val() == "") {
+        elt.addClass("bandinputActive");
+        elt.val(elt.attr("title"));
+    }
+}
+
+function onAjaxError(xhr, textStatus, errorThrown) {
+    console.log("error :(", xhr, textStatus, errorThrown);
+
+    //TODO: actually handle errors and present them to the user
+
+    //Let's restore the bandarea box
+    $("#bandarea").html('<div id="inputboxes">'
+      + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
+      + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
+      + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
+      + '  <input type="text" class="bandinput" title="Enter a band name..."/>'
+      + '</div>'
+      + '<div id="bafooter">'
+      + '  <a href="#" id="submit">Submit</a> | <a href="#" id="addmore">Add More Bands</a>'
+      + '</div>');
+
+    init();
+}
+
+function onGotBands(bands) {
+    $("#bandarea").html('<ol id="bandlist"></ol>');
+    $.each(bands.slice(0,25), function(i, elt) {
+        var weighted = elt[0];
+        var sum = elt[1];
+        var n = elt[2];
+        var band = elt[3];
+
+        $("#bandlist").append('<li><a href="http://www.amazon.com/gp/redirect.html?ie=UTF8&location=http%3A%2F%2Fwww.amazon.com%2Fs%3Fie%3DUTF8%26x%3D0%26ref_%3Dnb_sb_noss%26y%3D0%26field-keywords%3D' + encodeURI(band) + '%26url%3Dsearch-alias%253Ddigital-music%23&tag=billmillorg-20&linkCode=ur2&camp=1789&creative=390957">' + band + "</a></li>");
+    });
+}
+
+function onSubmitSuccess(task_id) {
+    var uri = "/check_result?task_id=" + encodeURI(task_id);
+    $.poll(function(retry) {
+        $.ajax({
+            type: 'GET',
+            url: uri,
+            statusCode: {
+                200: function(data, responseText, jqXHR) {
+                    onGotBands(data);
+                },
+                202: function() {
+                    retry();
+                }
+            },
+            error: function(data, responseText, jqXHR) {
+                console.log("err", data, responseText, jqXHR);
+            },
+            dataType: 'json'
+        });
+    });
+}
+
+function onSubmitFail(data, textStatus, errorThrown) {
+  console.log(data, textStatus, errorThrown);
+}
+
+function onSubmit() {
+    var baseURI = "/similarity?";
+    //for each input, grab the value, and join them with & to make a query string
+    var keys = $(".bandinput").map(function(i,elt) {
+        var e = $(elt);
+        if (e.attr("title") != e.val()) {
+            return "b=" + e.val()
+        }
+    }).get().join("&");
+    var uri = encodeURI(baseURI + keys);
+
+    $("#bandarea").html('<div id="waiting"><img src="{{ STATIC_URL }}images/loading.gif"></div>');
+
+    console.log("requesting uri", uri);
+
+    $.ajax({
+        url: uri,
+        success: onSubmitSuccess,
+        error: onSubmitFail,
+        dataType: "json"
+    });
+}
+
+function onAddMore() {
+    var elt = $('<input type="text" class="bandinput" title="Enter a band name..."/>');
+    elt.addClass("bandinputActive");
+    elt.val(elt.attr("title"));
+    elt.focus(onInputFocus);
+    elt.blur(onInputBlur);
+
+    $("#inputboxes").append(elt);
+    $("#inputboxes").append(elt.clone());
+    $("#inputboxes").append(elt.clone());
+}
+
+function init() {
+    $("#submit").click(onSubmit);
+    $("#addmore").click(onAddMore);
+
+    //handle focus and blur on the input box
+    $(".bandinput").focus(onInputFocus);
+    $(".bandinput").blur(onInputBlur);
+
+    //execute a blur on the box
+    $(".bandinput").blur();
+}
+
+$(function() {
+    init();
+});
+</script>
+</head>
+<body>
+<div id="content">
+
+    <h1>Find Bands Similar To:</h1>
+
+    <div id="bandarea">
+        <div id="inputboxes">
+          <input type="text" class="bandinput" title="Enter a band name..."/>
+          <input type="text" class="bandinput" title="Enter a band name..."/>
+          <input type="text" class="bandinput" title="Enter a band name..."/>
+          <input type="text" class="bandinput" title="Enter a band name..."/>
+        </div>
+        <div id="bafooter">
+          <a href="#" id="submit">Submit</a> | <a href="#" id="addmore">Add More Bands</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
